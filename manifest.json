@@ -25,5 +25,9 @@
         "matches": ["<all_urls>"],
         "js": ["content.js"]
       }
-    ]
+    ],
+    "web_accessible_resources": [{
+      "resources": ["stakelogo.png"],
+      "matches": ["<all_urls>"]
+    }]
   }

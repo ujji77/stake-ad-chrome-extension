@@ -7,19 +7,31 @@ function processImage(originalImage) {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         
+        // Create logo image
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        
         img.onload = () => {
             // Set canvas size to match loaded image
             canvas.width = img.width;
             canvas.height = img.height;
             
-            // Draw image to canvas
+            // Draw original image to canvas
             ctx.drawImage(img, 0, 0);
             
-            // Calculate dimensions
+            // Calculate bar dimensions first (we need this for logo sizing)
             const barHeight = Math.min(30, Math.floor(canvas.height * 0.05));
             const lineHeight = Math.min(30, Math.floor(barHeight * 0.25));
             const barY = canvas.height - barHeight;
             const lineY = barY - lineHeight;
+            
+            // Calculate logo dimensions
+            const logoHeight = barHeight * 3; // 3 times the black bar height
+            const logoWidth = Math.floor(logoHeight * (logoImg.width / logoImg.height)); // maintain aspect ratio
+            
+            // Calculate logo position
+            const logoX = Math.floor(canvas.width * 0.75) - (logoWidth / 2); // 75% from left, centered at that point
+            const logoY = canvas.height - logoHeight; // Position from bottom of screen
             
             // Draw white line above black bar
             ctx.fillStyle = '#FFFFFF';
@@ -29,6 +41,9 @@ function processImage(originalImage) {
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, barY, canvas.width, barHeight);
             
+            // Draw logo on top of the bar
+            ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+            
             // Add text
             const text = 'GAMBLE RESPONSIBLY | #AD';
             ctx.fillStyle = '#FFFFFF';
@@ -36,10 +51,10 @@ function processImage(originalImage) {
             ctx.textBaseline = 'middle';
             
             // Calculate font size based on bar height
-            const fontSize = Math.min(6, Math.floor(barHeight * 0.6));
+            const fontSize = Math.min(16, Math.floor(barHeight * 0.6));
             ctx.font = `bold ${fontSize}px Arial`;
             
-            // Draw text centered in the black bar
+            // Draw text centered in the black bar, regardless of logo position
             ctx.fillText(text, canvas.width / 2, barY + (barHeight / 2));
             
             // Convert canvas to base64 URL
@@ -47,22 +62,23 @@ function processImage(originalImage) {
             resolve(newImageUrl);
         };
 
-        img.onerror = () => {
-            console.error('Failed to load image:', originalImage.src);
-            resolve(originalImage.src); // Return original image if we can't process it
+        logoImg.onload = () => {
+            img.src = originalImage.src;
         };
 
-        // Try to load the image with a proxy if needed
-        if (originalImage.src.startsWith('http')) {
-            // Use a CORS proxy to load the image
-            // You might need to set up your own proxy or use a service
-            img.src = originalImage.src.replace(
-                'https://', 
-                'https://cors-anywhere.herokuapp.com/'
-            );
-        } else {
+        img.onerror = () => {
+            console.error('Failed to load image:', originalImage.src);
+            resolve(originalImage.src);
+        };
+
+        logoImg.onerror = () => {
+            console.error('Failed to load logo');
+            console.log('Attempted logo URL:', chrome.runtime.getURL('stakelogo.png'));
             img.src = originalImage.src;
-        }
+        };
+
+        // Load the logo from extension resources
+        logoImg.src = chrome.runtime.getURL('stakelogo.png');
     });
 }
 
