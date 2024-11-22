@@ -20,8 +20,10 @@ function processImage(originalImage) {
             ctx.drawImage(img, 0, 0);
             
             // Calculate bar dimensions first (we need this for logo sizing)
-            const barHeight = Math.min(30, Math.floor(canvas.height * 0.05));
-            const lineHeight = Math.min(30, Math.floor(barHeight * 0.25));
+            // const barHeight = Math.min(30, Math.floor(canvas.height * 0.05));
+            // const lineHeight = Math.min(30, Math.floor(barHeight * 0.25));
+            const barHeight = canvas.height * 0.05;
+            const lineHeight = barHeight * 0.25;
             const barY = canvas.height - barHeight;
             const lineY = barY - lineHeight;
             
@@ -51,7 +53,7 @@ function processImage(originalImage) {
             ctx.textBaseline = 'middle';
             
             // Calculate font size based on bar height
-            const fontSize = Math.min(16, Math.floor(barHeight * 0.6));
+            const fontSize = barHeight * 0.6;
             ctx.font = `bold ${fontSize}px Arial`;
             
             // Draw text centered in the black bar, regardless of logo position
