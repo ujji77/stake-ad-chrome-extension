@@ -24,23 +24,26 @@ This extension automatically processes images on any webpage you visit, adding:
 1. Add your logo image file to the extension directory
 2. Add the filename to `web_accessible_resources` in `manifest.json`: 
 
-json
+```json
 "web_accessible_resources": [{
 "resources": ["stakelogo.png", "raisingcaneslogo.png", "your-logo.png"],
 "matches": ["<all_urls>"]
 }]
+```
 
 3. Update the logo reference in `content.js` (around line 95):
 
-javascript
+```javascript
 logoImg.src = chrome.runtime.getURL('your-logo.png');
+```
 
 ### Changing the Promotional Text
 
 Update the text variable in `content.js` (around line 52):
 
-javascript
+```javascript
 const text = 'GAMBLE RESPONSIBLY | #AD'; // Change to your desired message
+```
 
 ### Pre-included Alternatives
 
